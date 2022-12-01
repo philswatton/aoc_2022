@@ -1,0 +1,1 @@
+python aoc_2022/01_calories.py https://adventofcode.com/2022/day/1/input

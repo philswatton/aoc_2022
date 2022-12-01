@@ -1,0 +1,1 @@
+python aoc_2022/01_calories.py data/01_list.txt
