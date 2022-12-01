@@ -25,13 +25,21 @@ def main():
                 elfList.append(0)
             else:
                 elfList[iterator] = elfList[iterator] + int(lineRegex.group(0))
-
-    # Get index of highest calorie elf and their calories
-    elfIndex = elfList.index(max(elfList))
-    elfCalories = elfList[elfIndex]
-
-    # Print output to console
-    print("Elf " + str(elfIndex+1) + " is carrying " + str(elfCalories) + " calories")
+    
+    # Function that returns index of elfList sorted by calories
+    def sortIndex(list, rev=True):
+        index = range(len(list))
+        sortedIndex = sorted(index, key=lambda i: list[i], reverse=rev)
+        return sortedIndex
+    
+    # Got top 3 indices
+    top3Elves = sortIndex(elfList)[:3]
+    
+    # Part 1: Print top elf calories to console
+    print("Elf " + str(top3Elves[0] + 1) + " is carrying " + str(elfList[top3Elves[0]]) + " calories")
+    
+    # Part 2: Print top 3 elves combined calories to console
+    print("The top three elves are carrying " + str(sum([elfList[index] for index in top3Elves])) + " calories together")
 
 # Run
 if __name__ == "__main__":
