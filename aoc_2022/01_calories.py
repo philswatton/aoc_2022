@@ -24,13 +24,14 @@ def main():
                 iterator += 1 #assuming only one new line between elves
                 elfList.append(0)
             else:
-                elfList[iterator] = elfList[iterator] + float(lineRegex.group(0))
+                elfList[iterator] = elfList[iterator] + int(lineRegex.group(0))
 
-    # Get index of highest calorie elf
+    # Get index of highest calorie elf and their calories
     elfIndex = elfList.index(max(elfList))
+    elfCalories = elfList[elfIndex]
 
     # Print output to console
-    print("Elf " + str(elfIndex+1) + " is carrying the most calories")
+    print("Elf " + str(elfIndex+1) + " is carrying " + str(elfCalories) + " calories")
 
 # Run
 if __name__ == "__main__":
