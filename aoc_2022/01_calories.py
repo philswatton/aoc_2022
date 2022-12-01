@@ -2,32 +2,30 @@ from argparse import ArgumentParser
 import re
 
 # Usage: python 01_calories.py input_file_path
-def process():
+def get_input_file_path() -> str:
     parser = ArgumentParser(description="Calculate elf with the most calories")
     parser.add_argument("input_file_path") # required (positional) arguments
     args = parser.parse_args()
-    print(args)
-    return args
+    return args.input_file_path
 
 # Main
 def main():
     # Get file path
-    file_path = process().input_file_path
+    file_path = get_input_file_path()
     
     # Iterate over input file, calculate list of elf total calories
     elfList = [0]
     iterator = 0
     with open(file_path) as inputFile:
         for line in inputFile.readlines():
-            lineRegex = re.search("^\d+", line)
-            if lineRegex == None:
+            if line == "\n":
                 iterator += 1 #assuming only one new line between elves
                 elfList.append(0)
             else:
-                elfList[iterator] = elfList[iterator] + int(lineRegex.group(0))
+                elfList[iterator] = elfList[iterator] + int(line)
     
     # Function that returns index of elfList sorted by calories
-    def sortIndex(list, rev=True):
+    def sortIndex(list: list[int], rev: bool=True) -> list[int]:
         index = range(len(list))
         sortedIndex = sorted(index, key=lambda i: list[i], reverse=rev)
         return sortedIndex
