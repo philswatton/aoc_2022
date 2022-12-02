@@ -7,20 +7,36 @@ def get_input_file_path() -> str:
     args = parser.parse_args()
     return args.input_file_path
 
-# Part 1: Function to process a game.
-# Rock (A, X) 1, Paper (B, Y) 2, Scissors (C, Z), 3
+# Function to convert opponent moves to RPS (not strictly necessary, but makes easier)
+def opp_to_moves(strategy_list: list[str]) -> list[str]:
+    return list(map(lambda strategy: strategy.replace("A", "R").replace("B", "P").replace("C", "S"), strategy_list))
+
+# Part 1: Rock (A, X), Paper (B, Y), Scissors (C, Z)
+def strategy_to_game_1(strategy_list: list[str]) -> list[str]:
+    strategy_list = opp_to_moves(strategy_list)
+    return list(map(lambda strategy: strategy.replace("X", "R").replace("Y", "P").replace("Z", "S"), strategy_list))
+
+# Part 2: X lose, Y draw, Z win
+def strategy_to_game_2():
+    print("Hello!")
+
+
+# Function to score a round of Rock-Paper Scissors.
+# Rock 1, Paper 2, Scissors 3
 # Rock beats scissors (1 > 3), paper beats rock (2 > 1), scissors beats paper (3 > 2)
 # 0 for loss, 3 for draw, 6 for win
-def game_score(result: str):
-    if (result[0] == "A" and result[2] == "Z") or (result[0] == "B" and result[2] == "X") or (result[0] == "C" and result[2] == "Y"):
-        score = 0
-    elif (result[0] == "C" and result[2] == "X") or (result[0] == "A" and result[2] == "Y") or (result[0] == "B" and result[2] == "Z"):
-        score = 6
-    else:
+def game_to_score(result: str) -> int:
+    # Compute win/draw/loss score
+    if result[0] == result[2]:
         score = 3
-    if result[2] == "X":
+    elif (result[0] == "R" and result[2] == "S") or (result[0] == "P" and result[2] == "R") or (result[0] == "S" and result[2] == "P"):
+        score = 0
+    else:
+        score = 6
+    # Add score based on move played
+    if result[2] == "R":
         score += 1
-    elif result[2] == "Y":
+    elif result[2] == "P":
         score += 2
     else:
         score += 3
@@ -33,10 +49,16 @@ def main():
     
     # Read in input file
     with open(file_path) as input_file:
-        results = input_file.read().rstrip()
-        result_list = results.split("\n")
-        score_list = list(map(game_score, result_list))
-        print("Total score: " + str(sum(score_list)))
+        # Process input
+        strategy_guide = input_file.read().rstrip()
+        strategy_list = strategy_guide.split("\n")
+        
+        # Part 1: assume X=rock, Y=paper, Z=scissors
+        game_list_1 = strategy_to_game_1(strategy_list)
+        score_list_1 = list(map(game_to_score, game_list_1))
+        print("Part 1 total score: " + str(sum(score_list_1)))
+        
+        # Part 2: X means lose, Y means draw, Z means win
 
 # Run
 if __name__ == "__main__":
