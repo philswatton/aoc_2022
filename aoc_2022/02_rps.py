@@ -36,7 +36,7 @@ def main():
         results = input_file.read()
         result_list = results.split("\n")
         score_list = list(map(game_score, result_list))
-        print("Total score: " str(sum(score_list)))
+        print("Total score: " + str(sum(score_list)))
 
 # Run
 if __name__ == "__main__":
