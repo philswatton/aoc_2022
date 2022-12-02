@@ -7,7 +7,7 @@ def get_input_file_path() -> str:
     args = parser.parse_args()
     return args.input_file_path
 
-# Function to process a game.
+# Part 1: Function to process a game.
 # Rock (A, X) 1, Paper (B, Y) 2, Scissors (C, Z), 3
 # Rock beats scissors (1 > 3), paper beats rock (2 > 1), scissors beats paper (3 > 2)
 # 0 for loss, 3 for draw, 6 for win
@@ -33,7 +33,7 @@ def main():
     
     # Read in input file
     with open(file_path) as input_file:
-        results = input_file.read()
+        results = input_file.read().rstrip()
         result_list = results.split("\n")
         score_list = list(map(game_score, result_list))
         print("Total score: " + str(sum(score_list)))
