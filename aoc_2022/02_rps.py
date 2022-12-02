@@ -16,9 +16,27 @@ def strategy_to_game_1(strategy_list: list[str]) -> list[str]:
     strategy_list = opp_to_moves(strategy_list)
     return list(map(lambda strategy: strategy.replace("X", "R").replace("Y", "P").replace("Z", "S"), strategy_list))
 
-# Part 2: X lose, Y draw, Z win
-def strategy_to_game_2():
-    print("Hello!")
+# Part 2: dict mapping move to move it will beat
+rps_dict = {
+    "R": "P",
+    "P": "S",
+    "S": "R"
+}
+
+# Part 2: compute move that will produce a win (Z), loss (X), or draw (Y)
+def compute_move(strategy: str) -> str:
+    if strategy[2] == "Y":
+        move = strategy[0:2] + strategy[0]
+    elif strategy[2] == "X":
+        move = strategy[0:2] + [mov for mov, opp in rps_dict.items() if opp == strategy[0]][0]
+    else:
+        move = strategy[0:2] + rps_dict[strategy[0]]
+    return move
+
+# Part 2: function that maps the above across a list of strategies
+def strategy_to_game_2(strategy_list: list[str]) -> list[str]:
+    strategy_list = opp_to_moves(strategy_list)
+    return list(map(compute_move, strategy_list))
 
 
 # Function to score a round of Rock-Paper Scissors.
@@ -59,7 +77,10 @@ def main():
         print("Part 1 total score: " + str(sum(score_list_1)))
         
         # Part 2: X means lose, Y means draw, Z means win
-
+        game_list_2 = strategy_to_game_2(strategy_list)
+        score_list_2 = list(map(game_to_score, game_list_2))
+        print("Part 2 total score: " + str(sum(score_list_2)))
+        
 # Run
 if __name__ == "__main__":
     main()
