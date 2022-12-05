@@ -1,0 +1,1 @@
+python aoc_2022/03_bagpack.py data/03_input.txt
