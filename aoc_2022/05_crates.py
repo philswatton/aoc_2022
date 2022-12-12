@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from typing import Callable
 import math
 
 # Usage: python 05_crates.py input_file_path
@@ -28,20 +29,35 @@ def box2array(boxes: list[str]) -> list[str]:
                 box_array[i].append(line[content_indices[i]])
     return box_array
 
-# Take one instruction and apply it
-def apply_instruction(boxarr: list[str], instruction: str) -> list[str]:
+# Instruction to num
+def instruction_to_num(instruction: str) -> int:
     instruction = instruction.split()
     num_moves = int(instruction[1])
-    move_from = int(instruction[3])
-    move_to = int(instruction[5])
+    move_from = int(instruction[3])-1
+    move_to = int(instruction[5])-1
+    return num_moves, move_from, move_to
+
+# Part 1: Take one instruction and apply it sequentially
+def apply_instruction_1(boxarr: list[str], instruction: str) -> list[str]:
+    num_moves, move_from, move_to = instruction_to_num(instruction)
     for i in range(num_moves):
-        boxarr[move_to-1].insert(0, boxarr[move_from-1].pop(0))
+        boxarr[move_to].insert(0, boxarr[move_from].pop(0))
     return(boxarr)
 
-# Parse the whole set of instructions
-def parse_instructions(boxarr: list[str], instructions: list[str]) -> list[str]:
+# Part 2: Take one instruction and apply it in one go
+def apply_instruction_2(boxarr: list[str], instruction: str) -> list[str]:
+    num_moves, move_from, move_to = instruction_to_num(instruction)
+    temparr = boxarr[move_from][0:num_moves]
+    boxarr[move_from] = boxarr[move_from][num_moves:]
+    boxarr[move_to] = temparr + boxarr[move_to]
+    return boxarr
+
+# Parse the whole set of instructions step by step given a rule
+def parse_instructions(boxarr: list[str],
+                       instructions: list[str],
+                       box_fun: Callable) -> list[str]:
     for instruction in instructions:
-        boxarr = apply_instruction(boxarr, instruction)
+        boxarr = box_fun(boxarr, instruction)
     return boxarr
 
 # Function to print all top boxes
@@ -68,12 +84,15 @@ def main():
         locations = file[index-1]
         instructions = file[(index+1):len(file)]
         
-        # Array of boxes
-        box_arr = box2array(boxes)
-        
         # Part 1: parse instructions, get value of top boxes
-        out1 = parse_instructions(box_arr, instructions)
-        print("The top boxes contain the letters " + str(print_top_box(out1)))
+        box_arr = box2array(boxes)
+        out1 = parse_instructions(box_arr, instructions, apply_instruction_1)
+        print("Part 1: The top boxes contain the letters " + str(print_top_box(out1)))
+        
+        # Part 2: parse instructions, get value of top boxes
+        box_arr = box2array(boxes)
+        out2 = parse_instructions(box_arr, instructions, apply_instruction_2)
+        print("Part 2: The top boxes contain the letters " + str(print_top_box(out2)))
 
 # Run
 if __name__ == "__main__":
