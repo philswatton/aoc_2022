@@ -1,0 +1,1 @@
+python aoc_2022/06_signal.py data/06_run.txt
