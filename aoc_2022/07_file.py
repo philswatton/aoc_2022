@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from typing import Optional
 DIR, FILE = "dir", "file"
+SEARCH_SIZE, TOTAL_SPACE, NEEDED_SPACE = 100000, 70000000, 30000000
 
 # Usage: python 07_file.py input_file_path
 def get_input_file_path() -> str:
@@ -62,8 +63,6 @@ def node2sizes(node: Node):
             dir_sizes[node.name] += dir_sizes[child.name]
     return dir_sizes
 
-# Function that iterates over a dict of ints,
-
 # Main
 def main():
     # Get file path
@@ -79,9 +78,13 @@ def main():
     # Get dict of dir sizes
     dir_sizes = node2sizes(filesystem)
     
-    # Use dict comprehension to calculate sum
-    # print(dir_sizes)
-    print("Part 1: " + str(sum([x for x in dir_sizes.values() if x <= 100000])))
+    # Part 1: Use dict comprehension to calculate sum
+    print("Part 1: " + str(sum([x for x in dir_sizes.values() if x <= SEARCH_SIZE])))
+    
+    # Part 2: find smallest sufficiently large file to delete
+    unused_space = TOTAL_SPACE - dir_sizes["/"]
+    space_needed = NEEDED_SPACE - unused_space
+    print("Part 2: " + str(min([x for x in dir_sizes.values() if x >= space_needed])))
 
 # Run
 if __name__ == "__main__":
