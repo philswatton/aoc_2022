@@ -26,7 +26,7 @@ class Node:
 
 # Function to parse terminal output into Nodes
 def output2filesystem(terminal_output: list[str]) -> Node:
-    filesystem = Node(type=DIR, name="root", children={}, parent=None)
+    filesystem = Node(type=DIR, name="/", children={}, parent=None)
     current = filesystem
     for line in terminal_output:
         if line[0:4] == "$ cd":
@@ -39,13 +39,13 @@ def output2filesystem(terminal_output: list[str]) -> Node:
         elif line[0:3] == "dir":
             dir_name = line[4:]
             current.children[dir_name] = Node(type=DIR,
-                                              name=dir_name,
+                                              name=current.name + dir_name + "/",
                                               children={},
                                               parent=current)
         elif line[0:4] != "$ ls":
             parts = line.split()
             current.children[parts[1]] = Node(type=FILE,
-                                              name=parts[1],
+                                              name=current.name + parts[1],
                                               children=None,
                                               parent=current,
                                               size=int(parts[0]))
@@ -62,6 +62,8 @@ def node2sizes(node: Node):
             dir_sizes[node.name] += dir_sizes[child.name]
     return dir_sizes
 
+# Function that iterates over a dict of ints,
+
 # Main
 def main():
     # Get file path
@@ -76,7 +78,10 @@ def main():
     
     # Get dict of dir sizes
     dir_sizes = node2sizes(filesystem)
-    print(dir_sizes)
+    
+    # Use dict comprehension to calculate sum
+    # print(dir_sizes)
+    print("Part 1: " + str(sum([x for x in dir_sizes.values() if x <= 100000])))
 
 # Run
 if __name__ == "__main__":
