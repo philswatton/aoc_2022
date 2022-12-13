@@ -13,18 +13,20 @@ def get_input_file_path() -> str:
 class Node:
     def __init__(self,
                  type: str,
+                 name: str,
                  children: Optional[dict] = None,
                  parent: Optional["Node"] = None,
                  size: Optional[int] = None
                 ) -> None:
         self.type = type
+        self.name = name
         self.parent = parent
         self.children = children
         self.size = size
 
 # Function to parse terminal output into Nodes
-def output2filesystem(terminal_output: list[str]) -> dict:
-    filesystem = Node(DIR, {}, None)
+def output2filesystem(terminal_output: list[str]) -> Node:
+    filesystem = Node(type=DIR, name="root", children={}, parent=None)
     current = filesystem
     for line in terminal_output:
         if line[0:4] == "$ cd":
@@ -35,19 +37,30 @@ def output2filesystem(terminal_output: list[str]) -> dict:
             else:
                 current = current.children[line[5:]]
         elif line[0:3] == "dir":
-            current.children[line[4:]] = Node(DIR,
+            dir_name = line[4:]
+            current.children[dir_name] = Node(type=DIR,
+                                              name=dir_name,
                                               children={},
                                               parent=current)
         elif line[0:4] != "$ ls":
             parts = line.split()
-            current.children[parts[1]] = Node(FILE,
+            current.children[parts[1]] = Node(type=FILE,
+                                              name=parts[1],
                                               children=None,
                                               parent=current,
                                               size=int(parts[0]))
     return filesystem
         
-# Function that walks over Node structure, returns list of file sizes
-    
+# Function that recursively finds sizes of dirs in Node structure
+def node2sizes(node: Node):
+    dir_sizes = {node.name : 0}
+    for child in node.children.values():
+        if child.type == FILE:
+            dir_sizes[node.name] += child.size
+        if child.type == DIR:
+            dir_sizes = dir_sizes | node2sizes(child)
+            dir_sizes[node.name] += dir_sizes[child.name]
+    return dir_sizes
 
 # Main
 def main():
@@ -60,8 +73,10 @@ def main():
     
     # Parse output into file system
     filesystem = output2filesystem(terminal_output)
-    print(filesystem.children)
-    print(filesystem.children["d"].children)
+    
+    # Get dict of dir sizes
+    dir_sizes = node2sizes(filesystem)
+    print(dir_sizes)
 
 # Run
 if __name__ == "__main__":
