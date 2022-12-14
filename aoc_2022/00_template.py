@@ -14,7 +14,7 @@ def main():
     
     # Read in input file
     with open(file_path) as input_file:
-        print("Hello, world")
+        file_lines = input_file.read().rstrip().split("\n")
 
 # Run
 if __name__ == "__main__":
