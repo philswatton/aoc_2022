@@ -1,0 +1,1 @@
+python aoc_2022/08_trees.py data/08_test.txt
