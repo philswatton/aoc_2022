@@ -7,7 +7,13 @@ def get_input_file_path() -> str:
     args = parser.parse_args()
     return args.input_file_path
 
-# Row search function
+# Row and column number of tree
+def tree_grid_dims(grid: list[str]) -> int:
+    nrow = len(grid)
+    ncol = len(grid[0])
+    return nrow, ncol
+
+# Part 1: Row search function
 def row_search(grid: list[str], nrow: int, col_start: int, col_fin: int, increment: int) -> set:
     out = set()
     for i in range(1, nrow-1):
@@ -18,7 +24,7 @@ def row_search(grid: list[str], nrow: int, col_start: int, col_fin: int, increme
                 prev_height = grid[i][j]
     return out
 
-# Column search function
+# Part 1: Column search function
 def col_search(grid: list[str], ncol: int, row_start: int, row_fin: int, increment: int) -> set:
     out = set()
     for j in range(1, ncol-1):
@@ -29,11 +35,10 @@ def col_search(grid: list[str], ncol: int, row_start: int, row_fin: int, increme
                 prev_height = grid[i][j]
     return out
 
-# Function that can search for visible trees
+# Part 1: function that can search for visible trees
 def tree_search(grid: list[str]) -> set[int]:
     # Dimensions
-    nrow = len(grid)
-    ncol = len(grid[0])
+    nrow, ncol = tree_grid_dims(grid)
     
     # search in all directions, indexing trees that are visible
     left_visible = row_search(grid, nrow, 1, ncol-2, 1)
@@ -50,6 +55,50 @@ def tree_search(grid: list[str]) -> set[int]:
     # Return
     return n_visible
 
+# Part 2: Row distance function
+def row_dist(grid: list[str], row: int, col: int, end, increment: int) -> int:
+    value = grid[row][col]
+    dist = 0
+    for i in range(col+increment, end, increment):
+        dist += 1
+        print("Current Value: " + str(value))
+        print("New Value: " + str(grid[row][i]))
+        if value <= grid[row][i]:
+            break
+    return dist
+
+# Part 2: Column distance function
+def col_dist(grid: list[str], row: int, col: int, end, increment: int) -> int:
+    value = grid[row][col]
+    dist = 0
+    for i in range(row+increment, end, increment):
+        dist += 1
+        if value <= grid[i][col]:
+            break
+    return dist
+
+# Part 2: find maximum view value
+def value_search(grid: list[str]) -> int:
+    # Dimensions
+    nrow, ncol = tree_grid_dims(grid)
+    
+    # Setup
+    current_max = 0
+    
+    # Loop
+    for i in range(1, nrow-1):
+        for j in range(1, ncol-1):
+            dist_left = row_dist(grid, i, j, -1, -1)
+            dist_right = row_dist(grid, i, j, ncol, 1)
+            dist_up = col_dist(grid, i, j, -1, -1)
+            dist_bottom = col_dist(grid, i, j, nrow, 1)
+            dist_product = dist_left * dist_right * dist_up * dist_bottom
+            if dist_product > current_max:
+                current_max = dist_product
+    
+    # Return
+    return current_max
+
 # Main
 def main():
     # Get file path
@@ -62,6 +111,10 @@ def main():
     # Part 1: Number of visible trees
     n_visible = tree_search(tree_grid)
     print("Number of trees visible: " + str(n_visible))
+    
+    # print(row_dist(tree_grid, row=2, col=1, end=4, increment=1))
+    max_value = value_search(tree_grid)
+    print("Highest possible scenic score: " + str(max_value))
     
     
 
