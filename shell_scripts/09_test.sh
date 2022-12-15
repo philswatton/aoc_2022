@@ -1,0 +1,1 @@
+python aoc_2022/09_rope.py data/09_test.txt
